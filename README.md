@@ -8,6 +8,8 @@ It uses Codeforces participant ratings, historical rating data, and Gym standing
 
 Requires **Python 3.10+** and `requests`.
 
+The shell commands below use Bash syntax (also suitable for Zsh); other shells may require adjustments.
+
 Install the dependency:
 
 ```bash
@@ -16,14 +18,23 @@ pip install requests
 
 Generate an API key and secret at [Codeforces API Settings](https://codeforces.com/settings/api).
 
-Set the credentials:
+Copy the credentials example in the repository directory:
 
 ```bash
-export CODEFORCES_API_KEY="your_key"
-export CODEFORCES_API_SECRET="your_secret"
+cp .credentials.example .credentials
 ```
 
-Save the script as `gym_ratings.py`.
+Open `.credentials` in a text editor and replace both placeholders with your API key and secret:
+
+```ini
+[codeforces]
+api_key = your_key_here
+api_secret = your_secret_here
+```
+
+Enter the values without quotes. The script reads this file directly from the directory containing `gym_ratings.py`, regardless of your current working directory. No `export` or `source` command is needed, and environment variables are not used for credentials.
+
+`.credentials` is ignored by Git; `.credentials.example` contains only placeholders and is safe to commit. Keep your filled-in file private.
 
 ## Basic usage
 

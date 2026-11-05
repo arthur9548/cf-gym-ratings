@@ -3,7 +3,7 @@
 """Estimate Codeforces Gym problem ratings with a regularized Elo/Rasch model.
 
 Requires: pip install requests
-Credentials: CODEFORCES_API_KEY, CODEFORCES_API_SECRET
+Credentials: copy .credentials.example to .credentials and fill in your API key and secret.
 
 Examples:
     python gym_ratings.py 106523
@@ -23,6 +23,7 @@ The ratings are heuristic estimates, not official Codeforces ratings.
 from __future__ import annotations
 
 import argparse
+import configparser
 import hashlib
 import json
 import math
@@ -51,13 +52,33 @@ ITEM_PSEUDO_COUNT = 1.0
 _LAST_API_CALL = -1e20
 
 
+def load_credentials():
+    """Read script-local credentials without shell execution or interpolation."""
+    path = Path(__file__).resolve().with_name(".credentials")
+    setup = ("Copy .credentials.example to .credentials beside gym_ratings.py "
+             "and fill in api_key and api_secret under [codeforces].")
+    config = configparser.ConfigParser(interpolation=None)
+    try:
+        config.read_string(path.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        raise ValueError(f"Missing credentials file: {path}. {setup}") from None
+    except (OSError, UnicodeError, configparser.Error):
+        # Parser exceptions can contain file contents, including secrets.
+        raise ValueError(f"Unable to read credentials file: {path}. {setup}") from None
+
+    key = config.get("codeforces", "api_key", fallback="").strip()
+    secret = config.get("codeforces", "api_secret", fallback="").strip()
+    if not key or not secret or key == "your_key_here" or secret == "your_secret_here":
+        raise ValueError(f"Incomplete credentials in {path}. {setup}")
+    return key, secret
+
+
 def api_call(method: str, params: dict[str, str], authenticated: bool = False):
     global _LAST_API_CALL
 
     params = dict(params)
     if authenticated:
-        key = os.environ["CODEFORCES_API_KEY"].strip()
-        secret = os.environ["CODEFORCES_API_SECRET"].strip()
+        key, secret = load_credentials()
         params["apiKey"] = key
         params["time"] = str(int(time.time()))
 

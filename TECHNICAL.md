@@ -631,10 +631,15 @@ If `--rating-mode current` is selected, only the first stage runs and its result
 
 Codeforces Gym standings require an authenticated API request.
 
-The program reads credentials from:
+The program reads the `[codeforces]` section of `.credentials` beside `gym_ratings.py`, independently of the current working directory:
 
-- `CODEFORCES_API_KEY`
-- `CODEFORCES_API_SECRET`
+```ini
+[codeforces]
+api_key = your_key_here
+api_secret = your_secret_here
+```
+
+Copy `.credentials.example` to `.credentials` and replace the placeholders with unquoted values. The local `.credentials` file is ignored by Git. Environment variables are not used for credentials, and the file is parsed as INI data without interpolation or shell execution. Missing, malformed, empty, or unchanged placeholder credentials produce a setup error before an authenticated request is sent.
 
 Authenticated requests include `apiKey`, `time`, and `apiSig`.
 
