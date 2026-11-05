@@ -1,0 +1,16 @@
+# Codeforces rating-history cache and its atomic-write temporary file
+.cf_rating_history_cache.json
+.cf_rating_history_cache.json.tmp
+
+# Saved console output and generated reports
+/output/
+/outputs/
+*.log
+
+# Python bytecode and tool caches
+__pycache__/
+*.py[cod]
+.cache/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
